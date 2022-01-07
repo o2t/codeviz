@@ -108,6 +108,21 @@ export function graphGenerator(flare, setCurrentNode) {
       .classed("node--source", false)
   }
 
+  function click(d) {
+    node
+      .each(function(n) { n.target = n.source = false })
+
+    link
+      .classed("link--target__persisted", function(l) { if (l.target === d) return l.source.source = true })
+      .classed("link--source__persisted", function(l) { if (l.source === d) return l.target.target = true })
+      .filter(function(l) { return l.target === d || l.source === d })
+      .raise()
+
+    node
+      .classed("node--target__persisted", (n) => n.target)
+      .classed("node--source__persisted", (n) => n.source)
+  }
+
   node = node
     .data(root.leaves())
     .enter().append("text")
@@ -117,5 +132,6 @@ export function graphGenerator(flare, setCurrentNode) {
       .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
       .text(function(d) { return d.data.key; })
       .on("mouseover", mouseovered)
+      .on('click', click)
       .on("mouseout", mouseouted)
 }

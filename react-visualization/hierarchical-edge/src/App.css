@@ -77,28 +77,33 @@
 
 .node:hover,
 .node--source,
-.node--target {
+.node--target,
+.node--source__persisted,
+.node--target__persisted {
   font-weight: 700;
+  cursor: pointer;
 }
 
-.node--source {
+.node--source, .node--source__persisted {
   fill: #2ca02c;
 }
 
-.node--target {
+.node--target, .node--target__persisted {
   fill: #d62728;
 }
 
 .link--source,
-.link--target {
+.link--target,
+.link--source__persisted,
+.link--target__persisted {
   stroke-opacity: 1;
   stroke-width: 2px;
 }
 
-.link--source {
+.link--source, .link--source__persisted {
   stroke: #d62728;
 }
 
-.link--target {
+.link--target, .link--target__persisted {
   stroke: #2ca02c;
 }
