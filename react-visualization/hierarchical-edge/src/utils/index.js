@@ -95,7 +95,7 @@ export function graphGenerator(flare, setCurrentNode) {
       .classed("node--target", (n) => n.target)
       .classed("node--source", (n) => n.source)
 
-    setCurrentNode(d.data.name)
+    setCurrentNode(d.data.name.substr(0, d.data.name.lastIndexOf(".")))
   }
 
   function mouseouted() {
