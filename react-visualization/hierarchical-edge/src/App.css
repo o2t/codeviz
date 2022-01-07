@@ -1,3 +1,19 @@
+/* App */
+.App {
+  height: 100vh;
+  width: 100vw;
+
+  text-align: center;
+
+  overflow: scroll;
+}
+
+.App .current-node {
+  position: absolute;
+  font-size: 60px;
+}
+
+/* No file */
 .no-file {
   height: 100vh;
   width: 100vw;
@@ -42,18 +58,10 @@
   background-color: #d3d3d3;
 }
 
-.App {
-  height: 100vh;
-  width: 100vw;
-
-  text-align: center;
-
-  overflow: scroll;
-}
-
+/* Graph custom */
 .node {
   font: 300 11px "Helvetica Neue", Helvetica, Arial, sans-serif;
-  fill: rgb(131, 129, 129);
+  fill: rgb(0, 0, 0);
 }
 
 .node:hover {

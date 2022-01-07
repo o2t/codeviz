@@ -46,7 +46,7 @@ function packageImports(nodes) {
   return imports;
 }
 
-export function graphGenerator(flare) {
+export function graphGenerator(flare, setCurrentNode) {
   // init d3 graph
   const diameter = 3000,
   radius = diameter / 2,
@@ -94,6 +94,8 @@ export function graphGenerator(flare) {
     node
       .classed("node--target", (n) => n.target)
       .classed("node--source", (n) => n.source)
+
+    setCurrentNode(d.data.name)
   }
 
   function mouseouted() {
