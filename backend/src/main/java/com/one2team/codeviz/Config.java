@@ -13,14 +13,21 @@ public record Config(
   @JsonProperty ("renderers") RendererConfig renderers
 ) {
 
-  public record RendererConfig (
-    @JsonProperty ("hierarchical-edge") HierarchicalEdgeRendererConfig hierarchicalEdgeRendererConfig
+  public record RendererConfig(
+    @JsonProperty ("hierarchical-edge") HierarchicalEdgeRendererConfig hierarchicalEdgeRendererConfig,
+    @JsonProperty ("force-directed") ForceDirectedRendererConfig forceDirectedRendererConfig
   ) {
 
   }
 
-  public record HierarchicalEdgeRendererConfig (
-    @JsonProperty("output") String output
+  public record HierarchicalEdgeRendererConfig(
+    @JsonProperty ("output") String output
+  ) {
+
+  }
+
+  public record ForceDirectedRendererConfig(
+    @JsonProperty ("output") String output
   ) {
 
   }
@@ -32,7 +39,8 @@ public record Config(
   }
 
   public record CollapsePackageGraphFilterConfig(
-    @JsonProperty("enabled") boolean enabled
+    @JsonProperty ("enabled") boolean enabled
   ) {
+
   }
 }

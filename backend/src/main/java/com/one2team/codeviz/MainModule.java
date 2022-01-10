@@ -24,6 +24,7 @@ public class MainModule implements Module {
 
     Multibinder<Renderer> renderers = newSetBinder (binder, Renderer.class);
     renderers.addBinding ().to (HierarchicalEdgeRenderer.class);
+    renderers.addBinding ().to (ForceDirectedRenderer.class);
 
     Multibinder<GraphFilter> graphFilters = newSetBinder (binder, GraphFilter.class);
     graphFilters.addBinding ().to (CollapsePackagesGraphFilter.class);
