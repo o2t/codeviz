@@ -16,10 +16,10 @@ import com.one2team.codeviz.config.HierarchicalEdgeRendererConfig;
 import com.one2team.codeviz.config.ImportedByMetricConfig;
 import com.one2team.codeviz.config.InheritanceMetricConfig;
 import com.one2team.codeviz.config.MethodsMetricConfig;
-import com.one2team.codeviz.config.MethodsReferencesMetricConfig;
 import com.one2team.codeviz.config.MetricConfig;
 import com.one2team.codeviz.config.RendererConfig;
 import com.one2team.codeviz.config.RendererFilterConfig;
+import com.one2team.codeviz.config.UnitMetricConfig;
 
 import static com.google.inject.multibindings.MapBinder.newMapBinder;
 
@@ -64,7 +64,7 @@ public class MainModule implements Module {
 
     metrics.addBinding (ImportedByMetricConfig.class).to (ImportedMetricByCollector.class);
     metrics.addBinding (MethodsMetricConfig.class).to (MethodsMetricCollector.class);
-    metrics.addBinding (MethodsReferencesMetricConfig.class).to (MethodsReferencesMetricCollector.class);
     metrics.addBinding (InheritanceMetricConfig.class).to (InheritanceMetricCollector.class);
+    metrics.addBinding (UnitMetricConfig.class).to (UnitMetricCollector.class);
   }
 }

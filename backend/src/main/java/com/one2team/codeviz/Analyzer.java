@@ -98,18 +98,6 @@ public class Analyzer {
         public void visit (ClassOrInterfaceDeclaration declaration, Void arg) {
           declaration.getFullyQualifiedName ().ifPresent (name -> {
             var node = nodeMap.computeIfAbsent (name, Node::new);
-            node.setSize (Optional.of (unit)
-              .flatMap (CompilationUnit::getStorage)
-              .map (Storage::getPath)
-              .map (path -> {
-                try {
-                  return Files.size (path);
-                } catch (IOException e) {
-                  throw new UncheckedIOException (e);
-                }
-              })
-              .orElse (0L));
-
             node.setDependencies (unit.getImports ().stream ()
               .filter (not (ImportDeclaration::isAsterisk))
               .map (i -> i.isStatic () ?

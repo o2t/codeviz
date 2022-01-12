@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 @JsonSubTypes ({
   @JsonSubTypes.Type (name = "imported-by", value = ImportedByMetricConfig.class),
   @JsonSubTypes.Type (name = "methods", value = MethodsMetricConfig.class),
-  @JsonSubTypes.Type (name = "methods-references", value = MethodsReferencesMetricConfig.class),
   @JsonSubTypes.Type (name = "inheritance", value = InheritanceMetricConfig.class),
+  @JsonSubTypes.Type (name = "unit", value = UnitMetricConfig.class),
 })
 public class MetricConfig {
 
