@@ -6,24 +6,20 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.google.inject.Binder;
 import com.google.inject.Module;
 import com.google.inject.TypeLiteral;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
 import com.one2team.codeviz.config.CollapsePackageRendererFilterConfig;
-import com.one2team.codeviz.config.CsvRendererConfig;
-import com.one2team.codeviz.config.ForceDirectedRendererConfig;
-import com.one2team.codeviz.config.GexfRendererConfig;
-import com.one2team.codeviz.config.HierarchicalEdgeRendererConfig;
-import com.one2team.codeviz.config.ImportsAnalyzerPluginConfig;
-import com.one2team.codeviz.config.InheritanceAnalyzerPluginConfig;
-import com.one2team.codeviz.config.MethodsAnalyzerPluginConfig;
-import com.one2team.codeviz.config.AnalyzerPluginConfig;
 import com.one2team.codeviz.config.RendererConfig;
 import com.one2team.codeviz.config.RendererFilterConfig;
-import com.one2team.codeviz.config.UnitAnalyzerPluginConfig;
-import com.one2team.codeviz.plugins.ImportsAnalyzerPlugin;
-import com.one2team.codeviz.plugins.InheritanceAnalyzerPlugin;
-import com.one2team.codeviz.plugins.MethodsAnalyzerPlugin;
 import com.one2team.codeviz.plugins.PluginsModule;
+import com.one2team.codeviz.renderers.CollapsePackagesRendererFilter;
+import com.one2team.codeviz.renderers.CsvRenderer;
+import com.one2team.codeviz.renderers.ForceDirectedRenderer;
+import com.one2team.codeviz.renderers.GexfRenderer;
+import com.one2team.codeviz.renderers.HierarchicalEdgeRenderer;
+import com.one2team.codeviz.renderers.HierarchicalEdgeRenderer.Config;
+import com.one2team.codeviz.renderers.RenderersModule;
 
 import static com.google.inject.multibindings.MapBinder.newMapBinder;
 
@@ -32,6 +28,9 @@ public class MainModule implements Module {
   @Override
   public void configure (Binder binder) {
     binder.install (new PluginsModule ());
+    binder.install (new RenderersModule ());
+    binder.install (new FactoryModuleBuilder ().build (PluginContext.Factory.class));
+
     binder.bind (ObjectMapper.class)
       .annotatedWith (Names.named ("yaml"))
       .toInstance (new ObjectMapper (new YAMLFactory ())
@@ -48,10 +47,10 @@ public class MainModule implements Module {
       new TypeLiteral<> () {
       });
 
-    renderers.addBinding (HierarchicalEdgeRendererConfig.class).to (HierarchicalEdgeRenderer.class);
-    renderers.addBinding (ForceDirectedRendererConfig.class).to (ForceDirectedRenderer.class);
-    renderers.addBinding (GexfRendererConfig.class).to (GexfRenderer.class);
-    renderers.addBinding (CsvRendererConfig.class).to (CsvRenderer.class);
+    renderers.addBinding (Config.class).to (HierarchicalEdgeRenderer.class);
+    renderers.addBinding (ForceDirectedRenderer.Config.class).to (ForceDirectedRenderer.class);
+    renderers.addBinding (GexfRenderer.Config.class).to (GexfRenderer.class);
+    renderers.addBinding (CsvRenderer.Config.class).to (CsvRenderer.class);
 
     MapBinder<Class<? extends RendererFilterConfig>, RendererFilter<?>> graphFilters = newMapBinder (binder,
       new TypeLiteral<> () {
@@ -60,11 +59,5 @@ public class MainModule implements Module {
       });
 
     graphFilters.addBinding (CollapsePackageRendererFilterConfig.class).to (CollapsePackagesRendererFilter.class);
-
-    newMapBinder (binder,
-      new TypeLiteral<> () {
-      },
-      new TypeLiteral<> () {
-      });
   }
 }

@@ -1,22 +1,37 @@
 package com.one2team.codeviz.plugins;
 
-import java.util.concurrent.atomic.AtomicLong;
+import javax.annotation.Priority;
+import javax.inject.Inject;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.one2team.codeviz.AnalyzerPlugin;
 import com.one2team.codeviz.Node;
-import com.one2team.codeviz.config.MethodsAnalyzerPluginConfig;
+import com.one2team.codeviz.Plugin;
+import com.one2team.codeviz.PluginContext;
+import com.one2team.codeviz.config.PluginConfig;
+import com.one2team.codeviz.plugins.MethodsPlugin.Config;
 
-public class MethodsAnalyzerPlugin extends AnalyzerPlugin<MethodsAnalyzerPluginConfig, Void> {
+import static com.one2team.codeviz.plugins.Priorities.NORMAL;
+
+@Priority (NORMAL)
+public class MethodsPlugin extends Plugin<Config> {
+
+  public static class Config extends PluginConfig {
+
+  }
+
+  @Inject
+  MethodsPlugin () {
+  }
+
 
   @Override
-  public void collect (MethodsAnalyzerPluginConfig config, Void context, CompilationUnit unit, Node node) {
+  public void analyze (Config config, PluginContext context, CompilationUnit unit, Node node) {
     unit.accept (new VoidVisitorAdapter<Void> () {
       @Override
       public void visit (MethodDeclaration type, Void arg) {
-        node.getMetrics ().computeIfAbsent ("methods", n -> new AtomicLong ()).addAndGet (1);
+        node.getMetrics ().increment ("methods");
         String key;
         switch (type.getAccessSpecifier ()) {
           case PUBLIC -> key = "methods-public";
@@ -25,7 +40,7 @@ public class MethodsAnalyzerPlugin extends AnalyzerPlugin<MethodsAnalyzerPluginC
           default -> key = "methods-package-private";
         }
 
-        node.getMetrics ().computeIfAbsent (key, n -> new AtomicLong ()).addAndGet (1);
+        node.getMetrics ().increment (key);
         super.visit (type, arg);
       }
     }, null);

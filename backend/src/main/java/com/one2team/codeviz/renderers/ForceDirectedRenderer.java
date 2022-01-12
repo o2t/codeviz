@@ -1,4 +1,4 @@
-package com.one2team.codeviz;
+package com.one2team.codeviz.renderers;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -9,15 +9,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.one2team.codeviz.config.ForceDirectedRendererConfig;
+import com.one2team.codeviz.Graph;
+import com.one2team.codeviz.Renderer;
+import com.one2team.codeviz.config.RendererConfig;
+import com.one2team.codeviz.renderers.ForceDirectedRenderer.Config;
 
-import static java.util.Optional.ofNullable;
+public class ForceDirectedRenderer extends Renderer<Config> {
 
-public class ForceDirectedRenderer extends BaseRenderer<ForceDirectedRendererConfig> {
+  public static class Config extends RendererConfig {
+
+  }
 
   record Node(
     @JsonProperty ("id") String id,
@@ -44,16 +48,14 @@ public class ForceDirectedRenderer extends BaseRenderer<ForceDirectedRendererCon
   private ObjectMapper mapper;
 
   @Override
-  protected void internalRender (ForceDirectedRendererConfig config, Graph graph, Path output) {
+  protected void internalRender (Config config, Graph graph, Path output) {
     List<Node> nodes = graph.getNodes ().values ().stream ()
       .map (node -> new Node (node.getName (), 1))
       .collect (Collectors.toList ());
 
     List<Link> links = graph.getNodes ().values ().stream ()
-      .flatMap (node -> ofNullable (node.getDependencies ())
-        .map (dependencies -> dependencies.stream ()
-          .map (dependency -> new Link (node.getName (), dependency, (int) node.getSize ())))
-        .orElseGet (Stream::empty))
+      .flatMap (node -> node.getDependencies ().get ().stream ()
+        .map (dependency -> new Link (node.getName (), dependency, (int) node.getMetrics ().get ("size"))))
       .collect (Collectors.toList ());
 
     try (Writer writer = Files.newBufferedWriter (output)) {

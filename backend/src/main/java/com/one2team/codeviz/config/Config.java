@@ -32,6 +32,6 @@ public class Config {
 
   @Getter
   @JsonProperty ("plugins")
-  private List<AnalyzerPluginConfig> plugins = new ArrayList<> ();
+  private List<PluginConfig> plugins = new ArrayList<> ();
 
 }

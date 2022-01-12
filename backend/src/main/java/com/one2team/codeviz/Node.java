@@ -1,32 +1,23 @@
 package com.one2team.codeviz;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicLong;
-
+import com.one2team.codeviz.utils.AttributeContainer;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 
-@EqualsAndHashCode (of = "name")
 @RequiredArgsConstructor
-public class Node {
+@EqualsAndHashCode (of = "name", callSuper = true)
+public class Node extends AttributeContainer {
 
   @Getter
   private final String name;
 
-  @Getter
-  @Setter
-  private Set<String> dependencies;
+  public Metrics getMetrics () {
+    return getOrCreateAttribute (Metrics.class);
+  }
 
-  @Getter
-  @Setter
-  private long size;
-
-  @Getter
-  @Setter
-  private Map<String, AtomicLong> metrics = new HashMap<> ();
-
+  public Dependencies getDependencies () {
+    return getOrCreateAttribute (Dependencies.class);
+  }
 }
+

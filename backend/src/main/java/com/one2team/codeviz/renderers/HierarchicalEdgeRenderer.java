@@ -1,4 +1,4 @@
-package com.one2team.codeviz;
+package com.one2team.codeviz.renderers;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -13,9 +13,16 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.one2team.codeviz.config.HierarchicalEdgeRendererConfig;
+import com.one2team.codeviz.Graph;
+import com.one2team.codeviz.Renderer;
+import com.one2team.codeviz.config.RendererConfig;
+import com.one2team.codeviz.renderers.HierarchicalEdgeRenderer.Config;
 
-public class HierarchicalEdgeRenderer extends BaseRenderer<HierarchicalEdgeRendererConfig> {
+public class HierarchicalEdgeRenderer extends Renderer<Config> {
+
+  public static class Config extends RendererConfig {
+
+  }
 
   @Inject
   @Named ("json")
@@ -29,9 +36,9 @@ public class HierarchicalEdgeRenderer extends BaseRenderer<HierarchicalEdgeRende
   }
 
   @Override
-  protected void internalRender (HierarchicalEdgeRendererConfig config, Graph graph, Path path) {
+  protected void internalRender (Config config, Graph graph, Path path) {
     List<Entry> entries = graph.getNodes ().values ().stream ()
-      .map (node -> new Entry (node.getName (), node.getSize (), node.getDependencies ()))
+      .map (node -> new Entry (node.getName (), node.getMetrics ().get ("size"), node.getDependencies ().get ()))
       .collect (Collectors.toList ());
 
     try (Writer output = Files.newBufferedWriter (path)) {

@@ -1,9 +1,11 @@
-package com.one2team.codeviz;
+package com.one2team.codeviz.renderers;
 
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
 
+import com.one2team.codeviz.Graph;
+import com.one2team.codeviz.Node;
+import com.one2team.codeviz.RendererFilter;
 import com.one2team.codeviz.config.CollapsePackageRendererFilterConfig;
 import com.one2team.codeviz.config.CollapsePackageRendererFilterConfig.Format;
 
@@ -15,20 +17,13 @@ public class CollapsePackagesRendererFilter implements RendererFilter<CollapsePa
   public Graph filter (CollapsePackageRendererFilterConfig config, Graph graph) {
     Map<String, Node> nodes = new HashMap<> ();
     graph.getNodes ().values ().forEach (node -> {
-        Node collapsed = nodes
-          .computeIfAbsent (extractPackageName (config, node.getName ()), name -> {
-            Node p = new Node (name);
-            p.setDependencies (new LinkedHashSet<> ());
-            return p;
-          });
-
-        ofNullable (node.getDependencies ())
-          .ifPresent (d -> d.forEach (e -> {
-            collapsed.getDependencies ().add (extractPackageName (config, e));
-            ofNullable (nodes.get (e))
-              .map (Node::getSize)
-              .ifPresent (size -> collapsed.setSize (collapsed.getSize () + size));
-          }));
+        Node collapsed = nodes.computeIfAbsent (extractPackageName (config, node.getName ()), Node::new);
+        node.getDependencies ().get ().forEach (e -> {
+          collapsed.getDependencies ().add (extractPackageName (config, e));
+          ofNullable (nodes.get (e))
+            .map (n -> n.getMetrics ().get ("size"))
+            .ifPresent (size -> collapsed.getMetrics ().add ("size", size));
+        });
       }
     );
 
