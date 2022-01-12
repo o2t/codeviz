@@ -3,29 +3,20 @@ package com.one2team.codeviz;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Optional;
 
-import com.one2team.codeviz.Config.CollapsePackageGraphFilterConfig;
-import com.one2team.codeviz.Config.GraphFilterConfig;
+import com.one2team.codeviz.config.CollapsePackageRendererFilterConfig;
+import com.one2team.codeviz.config.CollapsePackageRendererFilterConfig.Format;
 
 import static java.util.Optional.ofNullable;
 
-public class CollapsePackagesGraphFilter implements GraphFilter {
+public class CollapsePackagesRendererFilter implements RendererFilter<CollapsePackageRendererFilterConfig> {
 
   @Override
-  public Graph filter (Config config, Graph graph) {
-    boolean enabled = ofNullable (config.graphFilters ())
-      .map (GraphFilterConfig::collapsePackageGraphFilter)
-      .map (CollapsePackageGraphFilterConfig::enabled)
-      .orElse (false);
-
-    if (! enabled)
-      return graph;
-
+  public Graph filter (CollapsePackageRendererFilterConfig config, Graph graph) {
     Map<String, Node> nodes = new HashMap<> ();
     graph.getNodes ().values ().forEach (node -> {
         Node collapsed = nodes
-          .computeIfAbsent (extractPackageName (node.getName ()), name -> {
+          .computeIfAbsent (extractPackageName (config, node.getName ()), name -> {
             Node p = new Node (name);
             p.setDependencies (new LinkedHashSet<> ());
             return p;
@@ -33,7 +24,7 @@ public class CollapsePackagesGraphFilter implements GraphFilter {
 
         ofNullable (node.getDependencies ())
           .ifPresent (d -> d.forEach (e -> {
-            collapsed.getDependencies ().add (extractPackageName (e));
+            collapsed.getDependencies ().add (extractPackageName (config, e));
             ofNullable (nodes.get (e))
               .map (Node::getSize)
               .ifPresent (size -> collapsed.setSize (collapsed.getSize () + size));
@@ -46,11 +37,18 @@ public class CollapsePackagesGraphFilter implements GraphFilter {
     return collapsed;
   }
 
-  private static String extractPackageName (String className) {
+  private static String extractPackageName (CollapsePackageRendererFilterConfig config, String className) {
     int i = className.lastIndexOf ('.');
     if (i > 0)
       className = className.substring (0, i);
 
-    return className + "." + className.replaceAll ("\\.", "_");
+    boolean appendName = ofNullable (config.getNameFormat ())
+      .map (Format.path_and_package_name::equals)
+      .orElse (false);
+
+    if (appendName)
+      className = className + "." + className.replaceAll ("\\.", "_");
+
+    return className;
   }
 }

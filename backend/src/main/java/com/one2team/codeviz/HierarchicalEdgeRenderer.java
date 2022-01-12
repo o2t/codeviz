@@ -7,18 +7,15 @@ import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.one2team.codeviz.Config.HierarchicalEdgeRendererConfig;
-import com.one2team.codeviz.Config.RendererConfig;
+import com.one2team.codeviz.config.HierarchicalEdgeRendererConfig;
 
-public class HierarchicalEdgeRenderer implements Renderer {
+public class HierarchicalEdgeRenderer extends BaseRenderer<HierarchicalEdgeRendererConfig> {
 
   @Inject
   @Named ("json")
@@ -32,17 +29,7 @@ public class HierarchicalEdgeRenderer implements Renderer {
   }
 
   @Override
-  public void render (Config config, Graph graph) {
-    Path path = Optional.ofNullable (config)
-      .map (Config::renderers)
-      .map (RendererConfig::hierarchicalEdgeRendererConfig)
-      .map (HierarchicalEdgeRendererConfig::output)
-      .map (Paths::get)
-      .orElse (null);
-
-    if (path == null)
-      return;
-
+  protected void internalRender (HierarchicalEdgeRendererConfig config, Graph graph, Path path) {
     List<Entry> entries = graph.getNodes ().values ().stream ()
       .map (node -> new Entry (node.getName (), node.getSize (), node.getDependencies ()))
       .collect (Collectors.toList ());

@@ -7,19 +7,17 @@ import java.io.UncheckedIOException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.one2team.codeviz.Config.ForceDirectedRendererConfig;
-import com.one2team.codeviz.Config.RendererConfig;
+import com.one2team.codeviz.config.ForceDirectedRendererConfig;
 
 import static java.util.Optional.ofNullable;
 
-public class ForceDirectedRenderer implements Renderer {
+public class ForceDirectedRenderer extends BaseRenderer<ForceDirectedRendererConfig> {
 
   record Node(
     @JsonProperty ("id") String id,
@@ -46,16 +44,7 @@ public class ForceDirectedRenderer implements Renderer {
   private ObjectMapper mapper;
 
   @Override
-  public void render (Config config, Graph graph) {
-    Path output = ofNullable (config.renderers ())
-      .map (RendererConfig::forceDirectedRendererConfig)
-      .map (ForceDirectedRendererConfig::output)
-      .map (Paths::get)
-      .orElse (null);
-
-    if (output == null)
-      return;
-
+  protected void internalRender (ForceDirectedRendererConfig config, Graph graph, Path output) {
     List<Node> nodes = graph.getNodes ().values ().stream ()
       .map (node -> new Node (node.getName (), 1))
       .collect (Collectors.toList ());

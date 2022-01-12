@@ -1,4 +1,4 @@
-package com.one2team.codeviz;
+package com.one2team.codeviz.config;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class ConfigLoader {
 
   @Inject
-  @Named ("yaml")
+  @Named ("json")
   private ObjectMapper mapper;
 
   public Config loadConfig (Path configPath) throws IOException {

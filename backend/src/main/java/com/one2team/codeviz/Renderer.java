@@ -1,9 +1,9 @@
 package com.one2team.codeviz;
 
-import java.io.IOException;
+import com.one2team.codeviz.config.RendererConfig;
 
-public interface Renderer {
+public interface Renderer<CONFIG extends RendererConfig> {
 
-  void render (Config config, Graph graph);
+  void render (CONFIG config, Graph graph);
 
 }

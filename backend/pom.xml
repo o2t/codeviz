@@ -56,6 +56,12 @@
       <version>1.18.22</version>
       <scope>provided</scope>
     </dependency>
+    <!-- https://mvnrepository.com/artifact/it.uniroma1.dis.wsngroup.gexf4j/gexf4j -->
+    <dependency>
+      <groupId>it.uniroma1.dis.wsngroup.gexf4j</groupId>
+      <artifactId>gexf4j</artifactId>
+      <version>1.0.0</version>
+    </dependency>
   </dependencies>
 
 </project>

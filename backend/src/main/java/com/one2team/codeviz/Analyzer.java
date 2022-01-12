@@ -7,10 +7,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -24,6 +24,8 @@ import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
+import com.one2team.codeviz.config.ConfigLoader;
+import com.one2team.codeviz.config.RendererConfig;
 
 import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.not;
@@ -37,38 +39,39 @@ public class Analyzer {
   private JavaParser parser;
 
   @Inject
-  private Set<Renderer> renderers;
+  private MetricManagerFactory metricManagerFactory;
 
   @Inject
-  private Set<GraphFilter> graphFilters;
+  private Map<Class<? extends RendererConfig>, Renderer<?>> renderers;
 
   public void run (String... args) throws IOException {
     var config = configLoader.loadConfig (Paths.get (args[0]));
-    var src = Paths.get (config.src ());
+    var src = Paths.get (config.getSrc ());
+    MetricManager metricManager = metricManagerFactory.create (config);
 
-    Predicate<Path> includePattern = path ->
-      ofNullable (config.fileIncludePatterns ())
-        .map (patterns -> patterns.stream ()
-          .map (Pattern::compile)
-          .map (pattern -> pattern.matcher (path.toString ()))
-          .anyMatch (Matcher::find))
-        .orElse (true);
+    List<Pattern> fileIncludePatterns = config.getFileIncludePatterns ().stream ()
+      .map (Pattern::compile)
+      .toList ();
 
-    Predicate<String> importIncludePattern = importDeclaration ->
-      ofNullable (config.importIncludePatterns ())
-        .map (patterns -> patterns.stream ()
-          .map (Pattern::compile)
-          .map (pattern -> pattern.matcher (importDeclaration))
-          .anyMatch (Matcher::find))
-        .orElse (true);
+    Predicate<Path> includePattern = path -> fileIncludePatterns.stream ()
+      .map (pattern -> pattern.matcher (path.toString ()))
+      .anyMatch (Matcher::find);
 
-    Predicate<Path> excludePattern = path ->
-      ofNullable (config.fileExcludePatterns ())
-        .map (patterns -> patterns.stream ()
-          .map (Pattern::compile)
-          .map (pattern -> pattern.matcher (path.toString ()))
-          .allMatch (not (Matcher::find)))
-        .orElse (true);
+    List<Pattern> importIncludePatterns = config.getImportIncludePatterns ().stream ()
+      .map (Pattern::compile)
+      .toList ();
+
+    Predicate<String> importIncludePattern = importDeclaration -> importIncludePatterns.stream ()
+      .map (pattern -> pattern.matcher (importDeclaration))
+      .anyMatch (Matcher::find);
+
+    List<Pattern> fileExcludePatterns = config.getFileExcludePatterns ().stream ()
+      .map (Pattern::compile)
+      .toList ();
+
+    Predicate<Path> excludePattern = path -> fileExcludePatterns.stream ()
+      .map (pattern -> pattern.matcher (path.toString ()))
+      .allMatch (not (Matcher::find));
 
     @SuppressWarnings ("all")
     Predicate<Path> javaExtensionFilter = path ->
@@ -115,6 +118,8 @@ public class Analyzer {
               .filter (Objects::nonNull)
               .filter (importIncludePattern)
               .collect (Collectors.toSet ()));
+
+            metricManager.collect (unit, node);
           });
         }
       }, null));
@@ -127,11 +132,15 @@ public class Analyzer {
         .ifPresent (node::setDependencies))
       .collect (Collectors.toMap (Node::getName, Function.identity ())));
 
-    for (GraphFilter filter : graphFilters)
-      graph = filter.filter (config, graph);
-
-    var fg = graph;
+    metricManager.collect (graph);
     System.out.printf ("processed %d units%n", graph.getNodes ().size ());
-    renderers.forEach (renderer -> renderer.render (config, fg));
+    ofNullable (config.getRenderers ()).ifPresent (rendererConfigs ->
+      rendererConfigs.forEach (rendererConfig -> render (rendererConfig, graph)));
+  }
+
+  @SuppressWarnings ({ "unchecked", "rawtypes" })
+  private void render (RendererConfig config, Graph graph) {
+    Renderer renderer = renderers.get (config.getClass ());
+    renderer.render (config, graph);
   }
 }
