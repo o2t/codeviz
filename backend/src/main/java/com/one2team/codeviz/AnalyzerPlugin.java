@@ -1,9 +1,9 @@
 package com.one2team.codeviz;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.one2team.codeviz.config.MetricConfig;
+import com.one2team.codeviz.config.AnalyzerPluginConfig;
 
-public class MetricCollector<CONFIG extends MetricConfig, CONTEXT> {
+public class AnalyzerPlugin<CONFIG extends AnalyzerPluginConfig, CONTEXT> {
 
   public CONTEXT newContext (CONFIG config) {
     return null;

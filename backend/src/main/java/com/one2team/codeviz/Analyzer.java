@@ -2,7 +2,6 @@ package com.one2team.codeviz;
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -10,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -18,14 +16,13 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.ParseProblemException;
-import com.github.javaparser.ast.CompilationUnit;
-import com.github.javaparser.ast.CompilationUnit.Storage;
 import com.github.javaparser.ast.ImportDeclaration;
 import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.expr.Name;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.one2team.codeviz.config.ConfigLoader;
 import com.one2team.codeviz.config.RendererConfig;
+import com.one2team.codeviz.plugins.MetricManagerFactory;
 
 import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.not;

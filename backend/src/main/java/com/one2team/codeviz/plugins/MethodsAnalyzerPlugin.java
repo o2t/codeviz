@@ -1,16 +1,18 @@
-package com.one2team.codeviz;
+package com.one2team.codeviz.plugins;
 
 import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.one2team.codeviz.config.MethodsMetricConfig;
+import com.one2team.codeviz.AnalyzerPlugin;
+import com.one2team.codeviz.Node;
+import com.one2team.codeviz.config.MethodsAnalyzerPluginConfig;
 
-public class MethodsMetricCollector extends MetricCollector<MethodsMetricConfig, Void> {
+public class MethodsAnalyzerPlugin extends AnalyzerPlugin<MethodsAnalyzerPluginConfig, Void> {
 
   @Override
-  public void collect (MethodsMetricConfig config, Void context, CompilationUnit unit, Node node) {
+  public void collect (MethodsAnalyzerPluginConfig config, Void context, CompilationUnit unit, Node node) {
     unit.accept (new VoidVisitorAdapter<Void> () {
       @Override
       public void visit (MethodDeclaration type, Void arg) {

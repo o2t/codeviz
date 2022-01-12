@@ -31,7 +31,7 @@ public class Config {
   private List<RendererConfig> renderers = new ArrayList<> ();
 
   @Getter
-  @JsonProperty ("metrics")
-  private List<MetricConfig> metrics = new ArrayList<> ();
+  @JsonProperty ("plugins")
+  private List<AnalyzerPluginConfig> plugins = new ArrayList<> ();
 
 }

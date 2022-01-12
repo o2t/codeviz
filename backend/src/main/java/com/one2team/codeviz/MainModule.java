@@ -13,13 +13,17 @@ import com.one2team.codeviz.config.CsvRendererConfig;
 import com.one2team.codeviz.config.ForceDirectedRendererConfig;
 import com.one2team.codeviz.config.GexfRendererConfig;
 import com.one2team.codeviz.config.HierarchicalEdgeRendererConfig;
-import com.one2team.codeviz.config.ImportedByMetricConfig;
-import com.one2team.codeviz.config.InheritanceMetricConfig;
-import com.one2team.codeviz.config.MethodsMetricConfig;
-import com.one2team.codeviz.config.MetricConfig;
+import com.one2team.codeviz.config.ImportsAnalyzerPluginConfig;
+import com.one2team.codeviz.config.InheritanceAnalyzerPluginConfig;
+import com.one2team.codeviz.config.MethodsAnalyzerPluginConfig;
+import com.one2team.codeviz.config.AnalyzerPluginConfig;
 import com.one2team.codeviz.config.RendererConfig;
 import com.one2team.codeviz.config.RendererFilterConfig;
-import com.one2team.codeviz.config.UnitMetricConfig;
+import com.one2team.codeviz.config.UnitAnalyzerPluginConfig;
+import com.one2team.codeviz.plugins.ImportsAnalyzerPlugin;
+import com.one2team.codeviz.plugins.InheritanceAnalyzerPlugin;
+import com.one2team.codeviz.plugins.MethodsAnalyzerPlugin;
+import com.one2team.codeviz.plugins.PluginsModule;
 
 import static com.google.inject.multibindings.MapBinder.newMapBinder;
 
@@ -27,6 +31,7 @@ public class MainModule implements Module {
 
   @Override
   public void configure (Binder binder) {
+    binder.install (new PluginsModule ());
     binder.bind (ObjectMapper.class)
       .annotatedWith (Names.named ("yaml"))
       .toInstance (new ObjectMapper (new YAMLFactory ())
@@ -56,15 +61,10 @@ public class MainModule implements Module {
 
     graphFilters.addBinding (CollapsePackageRendererFilterConfig.class).to (CollapsePackagesRendererFilter.class);
 
-    MapBinder<Class<? extends MetricConfig>, MetricCollector<?, ?>> metrics = newMapBinder (binder,
+    newMapBinder (binder,
       new TypeLiteral<> () {
       },
       new TypeLiteral<> () {
       });
-
-    metrics.addBinding (ImportedByMetricConfig.class).to (ImportedMetricByCollector.class);
-    metrics.addBinding (MethodsMetricConfig.class).to (MethodsMetricCollector.class);
-    metrics.addBinding (InheritanceMetricConfig.class).to (InheritanceMetricCollector.class);
-    metrics.addBinding (UnitMetricConfig.class).to (UnitMetricCollector.class);
   }
 }

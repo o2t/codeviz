@@ -1,4 +1,4 @@
-package com.one2team.codeviz;
+package com.one2team.codeviz.plugins;
 
 import javax.inject.Inject;
 import java.util.Collections;
@@ -8,24 +8,28 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.CompilationUnit;
+import com.one2team.codeviz.AnalyzerPlugin;
+import com.one2team.codeviz.Graph;
+import com.one2team.codeviz.MetricManager;
+import com.one2team.codeviz.Node;
 import com.one2team.codeviz.config.Config;
-import com.one2team.codeviz.config.MetricConfig;
+import com.one2team.codeviz.config.AnalyzerPluginConfig;
 
 public class MetricManagerFactory {
 
   @Inject
-  private Map<Class<? extends MetricConfig>, MetricCollector<?, ?>> registry;
+  private Map<Class<? extends AnalyzerPluginConfig>, AnalyzerPlugin<?, ?>> registry;
 
   @SuppressWarnings ({ "unchecked", "rawtypes" })
   private static class Metric {
 
-    private final MetricConfig config;
+    private final AnalyzerPluginConfig config;
 
-    private final MetricCollector collector;
+    private final AnalyzerPlugin collector;
 
     private final Object context;
 
-    Metric (MetricConfig config, MetricCollector collector) {
+    Metric (AnalyzerPluginConfig config, AnalyzerPlugin collector) {
       this.config = config;
       this.collector = collector;
       this.context = collector.newContext (config);
@@ -42,7 +46,7 @@ public class MetricManagerFactory {
 
   public MetricManager create (Config config) {
     List<Metric> metrics = Optional.of (config)
-      .map (Config::getMetrics)
+      .map (Config::getPlugins)
       .map (metricConfigs -> metricConfigs.stream ()
         .map (metricConfig -> new Metric (metricConfig, registry.get (metricConfig.getClass ())))
         .collect (Collectors.toList ()))

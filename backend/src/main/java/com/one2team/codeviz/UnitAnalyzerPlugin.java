@@ -8,12 +8,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.CompilationUnit.Storage;
-import com.one2team.codeviz.config.UnitMetricConfig;
+import com.one2team.codeviz.config.UnitAnalyzerPluginConfig;
 
-public class UnitMetricCollector extends MetricCollector<UnitMetricConfig, Void> {
+public class UnitAnalyzerPlugin extends AnalyzerPlugin<UnitAnalyzerPluginConfig, Void> {
 
   @Override
-  public void collect (UnitMetricConfig config, Void unused, CompilationUnit unit, Node node) {
+  public void collect (UnitAnalyzerPluginConfig config, Void unused, CompilationUnit unit, Node node) {
     long size = Optional.of (unit)
       .flatMap (CompilationUnit::getStorage)
       .map (Storage::getPath)

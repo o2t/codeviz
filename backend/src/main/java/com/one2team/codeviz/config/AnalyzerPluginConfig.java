@@ -9,11 +9,11 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonTypeInfo (use = Id.NAME, include = As.WRAPPER_OBJECT)
 @JsonSubTypes ({
-  @JsonSubTypes.Type (name = "imported-by", value = ImportedByMetricConfig.class),
-  @JsonSubTypes.Type (name = "methods", value = MethodsMetricConfig.class),
-  @JsonSubTypes.Type (name = "inheritance", value = InheritanceMetricConfig.class),
-  @JsonSubTypes.Type (name = "unit", value = UnitMetricConfig.class),
+  @JsonSubTypes.Type (name = "imports", value = ImportsAnalyzerPluginConfig.class),
+  @JsonSubTypes.Type (name = "methods", value = MethodsAnalyzerPluginConfig.class),
+  @JsonSubTypes.Type (name = "inheritance", value = InheritanceAnalyzerPluginConfig.class),
+  @JsonSubTypes.Type (name = "unit", value = UnitAnalyzerPluginConfig.class),
 })
-public class MetricConfig {
+public class AnalyzerPluginConfig {
 
 }

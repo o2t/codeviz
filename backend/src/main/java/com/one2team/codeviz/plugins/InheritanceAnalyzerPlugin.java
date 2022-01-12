@@ -1,4 +1,4 @@
-package com.one2team.codeviz;
+package com.one2team.codeviz.plugins;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,15 +17,18 @@ import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.nodeTypes.NodeWithName;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
-import com.one2team.codeviz.InheritanceMetricCollector.Context;
-import com.one2team.codeviz.config.InheritanceMetricConfig;
+import com.one2team.codeviz.AnalyzerPlugin;
+import com.one2team.codeviz.Graph;
+import com.one2team.codeviz.Node;
+import com.one2team.codeviz.plugins.InheritanceAnalyzerPlugin.Context;
+import com.one2team.codeviz.config.InheritanceAnalyzerPluginConfig;
 import lombok.Getter;
 
 import static java.util.Optional.ofNullable;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Stream.concat;
 
-public class InheritanceMetricCollector extends MetricCollector<InheritanceMetricConfig, Context> {
+public class InheritanceAnalyzerPlugin extends AnalyzerPlugin<InheritanceAnalyzerPluginConfig, Context> {
 
   static class Context {
 
@@ -34,7 +37,7 @@ public class InheritanceMetricCollector extends MetricCollector<InheritanceMetri
 
     private final Map<String, TypeNode> typeNodes;
 
-    private Context (InheritanceMetricConfig config) {
+    private Context (InheritanceAnalyzerPluginConfig config) {
       List<Pattern> includePatterns = config.getIncludePatterns ().stream ()
         .map (Pattern::compile)
         .toList ();
@@ -78,12 +81,12 @@ public class InheritanceMetricCollector extends MetricCollector<InheritanceMetri
   }
 
   @Override
-  public Context newContext (InheritanceMetricConfig config) {
+  public Context newContext (InheritanceAnalyzerPluginConfig config) {
     return new Context (config);
   }
 
   @Override
-  public void collect (InheritanceMetricConfig config, Context context, CompilationUnit unit, Node node) {
+  public void collect (InheritanceAnalyzerPluginConfig config, Context context, CompilationUnit unit, Node node) {
     Predicate<ClassOrInterfaceType> includeFilter = context.getIncludePatterns ().apply (unit);
     unit.accept (new VoidVisitorAdapter<Void> () {
       @Override
@@ -98,7 +101,7 @@ public class InheritanceMetricCollector extends MetricCollector<InheritanceMetri
   }
 
   @Override
-  public void collect (InheritanceMetricConfig config, Context context, Graph graph) {
+  public void collect (InheritanceAnalyzerPluginConfig config, Context context, Graph graph) {
     graph.getNodes ().values ().forEach (node ->
       node.getMetrics ().put ("subtypes", new AtomicLong (ofNullable (context.getTypeNode (node.getName ()))
         .map (TypeNode::getRecursiveSubTypes)
