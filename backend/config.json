@@ -1,0 +1,68 @@
+{
+  "src": "/Users/dbr/dev/sciforma/sciforma-p4-mirror",
+  "file-include-patterns": [
+    "/com/sciforma/"
+  ],
+  "file-exclude-patterns": [
+    "/gwt/client/",
+    "/test/",
+    "/tmp/",
+    "Test.*\\.java"
+  ],
+  "import-include-patterns": [
+    "^com\\.sciforma\\."
+  ],
+  "plugins": [
+    {
+      "inheritance": {
+        "include-patterns": [
+          "^com\\.sciforma\\."
+        ]
+      }
+    }
+  ],
+  "renderers": [
+    {
+      "force-directed": {
+        "output": "/Users/dbr/Downloads/force.json",
+        "filters": [
+          {
+            "collapse-packages": {
+              "enabled": true,
+              "name-format": "path_only"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "hierarchical-edge": {
+        "output": "/Users/dbr/Downloads/flare-sf.json",
+        "filters": [
+          {
+            "collapse-packages": {
+              "enabled": true,
+              "name-format": "path_and_package_name"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "csv": {
+        "output": "/Users/dbr/Downloads/stats.csv",
+        "metrics": [
+          "size",
+          "imported-by",
+          "methods",
+          "subtypes"
+        ]
+      }
+    },
+    {
+      "gexf": {
+        "output": "/Users/dbr/Downloads/sf.gexf"
+      }
+    }
+  ]
+}
