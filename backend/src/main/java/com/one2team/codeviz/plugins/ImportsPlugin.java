@@ -1,7 +1,6 @@
 package com.one2team.codeviz.plugins;
 
 import javax.annotation.Priority;
-import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -23,12 +22,8 @@ public class ImportsPlugin extends Plugin<Config> {
 
   }
 
-  @Inject
-  ImportsPlugin () {
-  }
-
   @Override
-  public void analyze (Config config, PluginContext context) {
+  public void analyze (PluginContext context, Config config) {
     Map<Node, AtomicLong> imported = new HashMap<> ();
     var graph = context.getAttribute (Graph.class);
     graph.getNodes ().values ().forEach (node ->

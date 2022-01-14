@@ -1,7 +1,6 @@
 package com.one2team.codeviz.plugins;
 
 import javax.annotation.Priority;
-import javax.inject.Inject;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
@@ -24,13 +23,8 @@ public class UnitPlugin extends Plugin<Config> {
 
   }
 
-  @Inject
-  UnitPlugin () {
-  }
-
-
   @Override
-  public void analyze (Config config, PluginContext context, CompilationUnit unit, Node node) {
+  public void analyze1 (PluginContext context, Config config, CompilationUnit unit, Node node) {
     long size = Optional.of (unit)
       .flatMap (CompilationUnit::getStorage)
       .map (Storage::getPath)

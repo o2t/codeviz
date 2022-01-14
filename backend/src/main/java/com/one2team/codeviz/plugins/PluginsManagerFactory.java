@@ -10,7 +10,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.github.javaparser.ast.CompilationUnit;
-import com.one2team.codeviz.Graph;
 import com.one2team.codeviz.Node;
 import com.one2team.codeviz.Plugin;
 import com.one2team.codeviz.Plugin.Factory;
@@ -37,12 +36,16 @@ public class PluginsManagerFactory {
     Plugin plugin
   ) {
 
-    public void collect (CompilationUnit unit, Node node) {
-      plugin.analyze (config, context, unit, node);
+    public void analyze1 (CompilationUnit unit, Node node) {
+      plugin.analyze1 (context, config, unit, node);
     }
 
-    public void collect (Graph graph) {
-      plugin.analyze (config, context);
+    public void analyze2 (CompilationUnit unit, Node node) {
+      plugin.analyze2 (context, config, unit, node);
+    }
+
+    public void analyze () {
+      plugin.analyze (context, config);
     }
   }
 
@@ -79,13 +82,18 @@ public class PluginsManagerFactory {
 
     return new PluginsManager () {
       @Override
-      public void analyze (CompilationUnit unit, Node node) {
-        pluginEntries.forEach (pluginEntry -> pluginEntry.collect (unit, node));
+      public void analyze1 (CompilationUnit unit, Node node) {
+        pluginEntries.forEach (pluginEntry -> pluginEntry.analyze1 (unit, node));
       }
 
       @Override
-      public void analyze (Graph graph) {
-        pluginEntries.forEach (pluginEntry -> pluginEntry.collect (graph));
+      public void analyze2 (CompilationUnit unit, Node node) {
+        pluginEntries.forEach (pluginEntry -> pluginEntry.analyze2 (unit, node));
+      }
+
+      @Override
+      public void analyze () {
+        pluginEntries.forEach (PluginEntry::analyze);
       }
     };
   }

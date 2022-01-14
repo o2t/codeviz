@@ -1,6 +1,5 @@
 package com.one2team.codeviz.utils;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -21,6 +20,7 @@ import static com.google.inject.multibindings.MapBinder.newMapBinder;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toMap;
 
+@SuppressWarnings ("rawtypes")
 public class JacksonMapTypeResolver implements TypeIdResolver {
 
   private JavaType baseType;
@@ -35,7 +35,7 @@ public class JacksonMapTypeResolver implements TypeIdResolver {
 
   public static <TYPE> RegistryBuilder<TYPE> newBuilder (Binder binder, TypeLiteral<TYPE> baseType) {
     Map<String, Class<? extends TYPE>> map = new HashMap<> ();
-    return new RegistryBuilder<TYPE> () {
+    return new RegistryBuilder<> () {
       @Override
       public RegistryBuilder<TYPE> registerType (String typeId, Class<? extends TYPE> typeClass) {
         map.put (typeId, typeClass);
@@ -76,10 +76,6 @@ public class JacksonMapTypeResolver implements TypeIdResolver {
     this.reverseMapping = this.mapping.entrySet ().stream ().collect (toMap (Entry::getValue, Entry::getKey));
   }
 
-  Map<String, Class> getMapping () {
-    return mapping;
-  }
-
   private static Class<?> extractRootJacksonType (Class<?> type) {
     return Streams.superClassesOf (type)
       .filter (c -> c.getAnnotation (JsonTypeIdResolver.class) != null)
@@ -104,7 +100,7 @@ public class JacksonMapTypeResolver implements TypeIdResolver {
   }
 
   @Override
-  public JavaType typeFromId (DatabindContext context, String typeId) throws IOException {
+  public JavaType typeFromId (DatabindContext context, String typeId) {
     return ofNullable (mapping.get (typeId))
       .map (typeClass -> context.getTypeFactory ().constructSpecializedType (baseType, typeClass))
       .orElseThrow (() -> new IllegalStateException ("no mapping for typeId id  " + typeId));

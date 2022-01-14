@@ -1,7 +1,6 @@
 package com.one2team.codeviz.plugins;
 
 import javax.annotation.Priority;
-import javax.inject.Inject;
 
 import com.github.javaparser.ast.CompilationUnit;
 import com.github.javaparser.ast.body.MethodDeclaration;
@@ -21,13 +20,8 @@ public class MethodsPlugin extends Plugin<Config> {
 
   }
 
-  @Inject
-  MethodsPlugin () {
-  }
-
-
   @Override
-  public void analyze (Config config, PluginContext context, CompilationUnit unit, Node node) {
+  public void analyze1 (PluginContext context, Config config, CompilationUnit unit, Node node) {
     unit.accept (new VoidVisitorAdapter<Void> () {
       @Override
       public void visit (MethodDeclaration type, Void arg) {

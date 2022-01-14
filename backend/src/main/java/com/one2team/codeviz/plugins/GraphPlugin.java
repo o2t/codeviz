@@ -40,27 +40,25 @@ public class GraphPlugin extends Plugin<GraphPlugin.Config> {
   }
 
   @Override
-  public void analyze (Config config, PluginContext context, CompilationUnit unit, Node node) {
+  public void analyze1 (PluginContext context, Config config, CompilationUnit unit, Node node) {
     unit.accept (new VoidVisitorAdapter<Void> () {
       @Override
       public void visit (ClassOrInterfaceDeclaration declaration, Void arg) {
-        declaration.getFullyQualifiedName ().ifPresent (name -> {
-          var node = context.getNode (name);
-          node.getDependencies ().set (unit.getImports ().stream ()
+        declaration.getFullyQualifiedName ().ifPresent (name ->
+          context.getNode (name).getDependencies ().set (unit.getImports ().stream ()
             .filter (not (ImportDeclaration::isAsterisk))
             .map (i -> i.isStatic () ?
               i.getName ().getQualifier ().map (Name::asString).orElse (null) :
               i.getNameAsString ())
             .filter (Objects::nonNull)
             .filter (importIncludePatterns)
-            .collect (Collectors.toSet ()));
-        });
+            .collect (Collectors.toSet ())));
       }
     }, null);
   }
 
   @Override
-  public void analyze (Config config, PluginContext context) {
+  public void analyze (PluginContext context, Config config) {
     Graph graph = new Graph (context.getNodes ().stream ()
       .peek (node -> ofNullable (node.getDependencies ().get ())
         .map (dependencies -> dependencies.stream ()

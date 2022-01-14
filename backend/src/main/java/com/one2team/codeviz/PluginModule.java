@@ -47,7 +47,7 @@ public class PluginModule implements Module {
         new TypeLiteral<> () {
         });
 
-      class F implements Provider<Factory<? extends PluginConfig, Plugin<?>>> {
+      class RawFactory implements Provider<Factory<? extends PluginConfig, Plugin<?>>> {
 
         @Inject
         private Injector injector;
@@ -56,7 +56,7 @@ public class PluginModule implements Module {
           return (Factory<? extends PluginConfig, Plugin<?>>) injector.getInstance (Key.get (factoryType));
         }
       }
-      plugins.addBinding (configClass).toProvider (new F ());
+      plugins.addBinding (configClass).toProvider (new RawFactory ());
       JacksonMapTypeResolver.newBuilder (binder, PluginConfig.class)
         .registerType (pluginName, configClass)
         .done ();

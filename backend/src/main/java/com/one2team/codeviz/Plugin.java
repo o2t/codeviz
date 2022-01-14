@@ -11,9 +11,12 @@ public class Plugin<CONFIG extends PluginConfig> {
 
   }
 
-  public void analyze (CONFIG config, PluginContext context, CompilationUnit unit, Node node) {
+  public void analyze1 (PluginContext context, CONFIG config, CompilationUnit unit, Node node) {
   }
 
-  public void analyze (CONFIG config, PluginContext context) {
+  public void analyze2 (PluginContext context, CONFIG config, CompilationUnit unit, Node node) {
+  }
+
+  public void analyze (PluginContext context, CONFIG config) {
   }
 }

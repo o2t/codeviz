@@ -4,8 +4,10 @@ import com.github.javaparser.ast.CompilationUnit;
 
 public interface PluginsManager {
 
-  void analyze (CompilationUnit unit, Node node);
+  void analyze1 (CompilationUnit unit, Node node);
 
-  void analyze (Graph graph);
+  void analyze2 (CompilationUnit unit, Node node);
+
+  void analyze ();
 
 }

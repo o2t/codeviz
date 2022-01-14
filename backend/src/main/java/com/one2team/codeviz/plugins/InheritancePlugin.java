@@ -96,7 +96,7 @@ public class InheritancePlugin extends Plugin<Config> {
   }
 
   @Override
-  public void analyze (Config config, PluginContext context, CompilationUnit unit, Node node) {
+  public void analyze1 (PluginContext context, Config config, CompilationUnit unit, Node node) {
     Predicate<ClassOrInterfaceType> includeFilter = includePatterns.apply (unit);
     unit.accept (new VoidVisitorAdapter<Void> () {
       @Override
@@ -111,7 +111,7 @@ public class InheritancePlugin extends Plugin<Config> {
   }
 
   @Override
-  public void analyze (Config config, PluginContext context) {
+  public void analyze (PluginContext context, Config config) {
     context.getAttribute (Graph.class).getNodes ().values ().forEach (node ->
       node.getMetrics ().set ("subtypes", ofNullable (getTypeNode (node.getName ()))
         .map (TypeNode::getRecursiveSubTypes)
