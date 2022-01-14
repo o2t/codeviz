@@ -52,7 +52,7 @@ public class InheritancePlugin extends Plugin<Config> {
   private final Map<String, TypeNode> typeNodes;
 
   @Inject
-  InheritancePlugin (@Assisted PluginContext context, @Assisted Config config) {
+  InheritancePlugin (@Assisted Config config) {
     List<Pattern> includePatterns = config.getIncludePatterns ().stream ()
       .map (Pattern::compile)
       .toList ();

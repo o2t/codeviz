@@ -36,8 +36,6 @@ public class Analyzer {
     var src = Paths.get (config.getSrc ());
 
     PluginContext context = contextFactory.create (config);
-    Predicate<Path> includePattern = patternFilters.createInclusionFilter (config.getFileIncludePatterns (), Path::toString);
-    Predicate<Path> excludePattern = patternFilters.createExclusionFilter (config.getFileExcludePatterns (), Path::toString);
 
     @SuppressWarnings ("all")
     Predicate<Path> javaExtensionFilter = path ->
@@ -47,8 +45,8 @@ public class Analyzer {
     Files.walk (src)
       .filter (Files::isRegularFile)
       .filter (javaExtensionFilter)
-      .filter (excludePattern)
-      .filter (includePattern)
+      .filter (patternFilters.createExclusionFilter (config.getFileExcludePatterns (), Path::toString))
+      .filter (patternFilters.createInclusionFilter (config.getFileIncludePatterns (), Path::toString))
       .map (path -> {
         try {
           return parser.parse (path);
