@@ -50,13 +50,12 @@ public class Analyzer {
 
   private void walkAll (PluginContext context, BiConsumer<CompilationUnit, Node> pass) throws IOException {
     Config config = context.getConfig ();
-    var src = Paths.get (config.getSrc ());
     @SuppressWarnings ("all")
     Predicate<Path> extensionFilter = path ->
       com.google.common.io.Files.getFileExtension (path.toString ())
         .equalsIgnoreCase ("java");
 
-    Files.walk (src)
+    Files.walk (Paths.get (config.getSrc ()))
       .filter (Files::isRegularFile)
       .filter (extensionFilter)
       .filter (patternFilters.createExclusionFilter (config.getFileExcludePatterns (), Path::toString))
